@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard20</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Company />
+    <Authors>stanac</Authors>
+    <PackageLicenseUrl>https://github.com/stanac/ImmutableBuilder/blob/master/LICENSE</PackageLicenseUrl>
+    <Description>.NET Standard library for building immutable models</Description>
+    <PackageTags>Immutable netstandard dotnetcore</PackageTags>
+    <RepositoryUrl>https://github.com/stanac/ImmutableBuilder</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
