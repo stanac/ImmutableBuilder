@@ -8,7 +8,9 @@
     <PackageLicenseUrl>https://github.com/stanac/ImmutableBuilder/blob/master/LICENSE</PackageLicenseUrl>
     <Description>.NET Standard library for building immutable models</Description>
     <PackageTags>Immutable netstandard dotnetcore</PackageTags>
-    <RepositoryUrl>https://github.com/stanac/ImmutableBuilder</RepositoryUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageProjectUrl>https://github.com/stanac/ImmutableBuilder</PackageProjectUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>
