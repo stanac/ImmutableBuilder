@@ -96,6 +96,41 @@ namespace ImmutableBuilder.Tests
             Assert.Equal(p1.Name, p2.Name);
         }
 
+        [Fact]
+        public void AllInOneSample()
+        {
+            Account account1 = new Builder<Account>()
+                .Set(x => x.AccountNumber, "123")
+                .Set(x => x.IsSavingsAccount, true)
+                .Build();
+
+            Account account2 = new Builder<Account>()
+                .Set(x => x.AccountNumber, "987")
+                .Set(x => x.IsSavingsAccount, false)
+                .Build();
+
+            CreditCard cc1 = new Builder<CreditCard>()
+                .Set(x => x.Number, "1234")
+                .Set(x => x.Processor, CreditCardProcessors.Visa)
+                .Build();
+
+            CreditCard cc2 = new Builder<CreditCard>()
+                .Set(x => x.Number, "xzya")
+                .Set(x => x.Processor, CreditCardProcessors.MasterCard)
+                .Build();
+            
+            IEnumerable<Account> accounts = new[] { account1, account2 };
+
+            IReadOnlyList<CreditCard> ccs = new List<CreditCard> { cc1, cc2 };
+
+            Person p = new Builder<Person>()
+                .Set(x => x.Age, 29)
+                .Set(x => x.Name, "Kovalski")
+                .Set(x => x.CreditCards, ccs)
+                .Set(x => x.Accounts, accounts)
+                .Build();
+        }
+
         private Person BuildTestPerson()
         {
             return new Builder<Person>()
