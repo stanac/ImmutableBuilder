@@ -118,7 +118,7 @@ namespace ImmutableBuilder.Tests
                 .Set(x => x.Number, "xzya")
                 .Set(x => x.Processor, CreditCardProcessors.MasterCard)
                 .Build();
-            
+
             IEnumerable<Account> accounts = new[] { account1, account2 };
 
             IReadOnlyList<CreditCard> ccs = new List<CreditCard> { cc1, cc2 };

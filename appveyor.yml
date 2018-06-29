@@ -1,0 +1,14 @@
+branches:
+  only:
+    - master
+build:
+  project: ImmutableBuilder.sln
+  verbosity: minimal
+image: Visual Studio 2015
+configuration: Debug
+environment:
+  COVERALL_TOKEN:
+    secure: L2W1oNwF2qVYtnxS26aXsBaG8c2zp8+cO35eqL8EvlzIo+60WO/FaiBSDV5SS6II
+test_script:
+- cmd:
+    .\runtests.ps1
