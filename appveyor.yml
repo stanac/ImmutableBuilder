@@ -1,7 +1,7 @@
 branches:
   only:
     - master
-build:
+build_script:
 - cdm:
     dotnet build -c Debug
 image: Visual Studio 2015
