@@ -10,5 +10,5 @@ environment:
   COVERALL_TOKEN:
     secure: L2W1oNwF2qVYtnxS26aXsBaG8c2zp8+cO35eqL8EvlzIo+60WO/FaiBSDV5SS6II
 test_script:
-- cmd:
-    codecoverage.bat
+- ps: >-
+    .\codecoverage.ps1

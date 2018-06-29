@@ -331,3 +331,5 @@ ASALocalRun/
 nugettools/
 
 coverage.opencover.xml
+
+dotnettools/
