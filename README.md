@@ -1,6 +1,9 @@
 # ImmutableBuilder
 .NET Standard library for building immutable models
 
+
+[![Build status](https://ci.appveyor.com/api/projects/status/2ammvsne1eaygucx/branch/master?svg=true)](https://ci.appveyor.com/project/stanac/immutablebuilder/branch/master) [![Coverage Status](https://coveralls.io/repos/github/stanac/ImmutableBuilder/badge.svg?branch=master)](https://coveralls.io/github/stanac/ImmutableBuilder?branch=master)
+
 ## Install
 from nuget, requires NETStandard 2.0
 
