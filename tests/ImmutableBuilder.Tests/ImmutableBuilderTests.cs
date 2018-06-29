@@ -80,6 +80,14 @@ namespace ImmutableBuilder.Tests
             Assert.NotEqual(p1, p2);
             Assert.Equal(p1.Age, p2.Age);
             Assert.Equal(p1.Name, p2.Name);
+
+            p2 = Builder<Person>.Clone(p1);
+
+            Assert.NotNull(p1);
+            Assert.NotNull(p2);
+            Assert.NotEqual(p1, p2);
+            Assert.Equal(p1.Age, p2.Age);
+            Assert.Equal(p1.Name, p2.Name);
         }
 
         [Fact]
