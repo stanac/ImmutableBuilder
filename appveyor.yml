@@ -2,8 +2,8 @@ branches:
   only:
     - master
 build:
-  project: ImmutableBuilder.sln
-  verbosity: minimal
+- cdm:
+    dotnet build -c Debug
 image: Visual Studio 2015
 configuration: Debug
 environment:
