@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -9,8 +7,6 @@ namespace ImmutableBuilder
     public class Builder<T>
         where T : class
     {
-        private IReadOnlyList<PropertyInfo> _props;
-        private IDictionary<PropertyInfo, object> _propValues;
         private T _obj;
 
         /// <summary>
@@ -18,7 +14,6 @@ namespace ImmutableBuilder
         /// </summary>
         public Builder()
         {
-            _props = PropertyCache.GetProperties<T>();
             Clear();
         }
 
@@ -29,9 +24,9 @@ namespace ImmutableBuilder
         public Builder(T model) : this()
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            SetPropertiesFromModel(model);
+            _obj = CloneShallow(model);
         }
-
+        
         /// <summary>
         /// Creates new instance of <see cref="Builder{T}"/> and sets builder properties from <see cref="model"/>
         /// </summary>
@@ -48,8 +43,9 @@ namespace ImmutableBuilder
         /// <returns>Same instance of <see cref="Builder{T}"/></returns>
         public Builder<T> Set<P>(Expression<Func<T, P>> exp, P value)
         {
-            var propName = ((MemberExpression)exp.Body).Member.Name;
-            return Set(propName, value);
+            var prop = (exp.Body as MemberExpression).Member as PropertyInfo;
+            PropertySetterDelegate<T, P>.GetSetter(prop).Delegate(_obj, value);
+            return this;
         }
 
         /// <summary>
@@ -58,9 +54,8 @@ namespace ImmutableBuilder
         /// <returns>Same instance of <see cref="Builder{T}"/></returns>
         public Builder<T> Clear()
         {
-            _propValues = new Dictionary<PropertyInfo, object>();
-            var ctor = PropertyCache.GetConstructor<T>();
-            _obj = ctor.Invoke(new object[0]) as T;
+            Func<T> ctor = ConstructorDelegate.GetConstructor<T>();
+            _obj = ctor();
             return this;
         }
 
@@ -70,22 +65,17 @@ namespace ImmutableBuilder
         /// <returns>Instance of {T}</returns>
         public T Build()
         {
-            foreach (var prop in _propValues)
-            {
-                prop.Key.SetValue(_obj, prop.Value, null);
-            }
             return _obj;
         }
 
         /// <summary>
-        /// Clones provied object
+        /// Clones provided object, creating a shallow copy
         /// </summary>
         /// <param name="model">Model to clone</param>
         /// <returns>Cloned model</returns>
-        public static T Clone(T model)
+        public static T CloneShallow(T model)
         {
-            Builder<T> builder = FromObject(model);
-            return builder.Build();
+            return CloneDelegate<T>.GetShallowCopyDelegate()(model);
         }
 
         /// <summary>
@@ -101,21 +91,5 @@ namespace ImmutableBuilder
             return FromObject(model).Set(exp, value).Build();
         }
 
-        private void SetPropertiesFromModel(T model)
-        {
-            foreach (var prop in _props)
-            {
-                _propValues[prop] = prop.GetValue(model);
-            }
-        }
-
-        private Builder<T> Set(string propName, object value)
-        {
-            PropertyInfo prop = _props.SingleOrDefault(x => x.Name == propName);
-            if (prop == null) throw new ArgumentOutOfRangeException(propName);
-            _propValues[prop] = value;
-
-            return this;
-        }
     }
 }

@@ -80,8 +80,9 @@ namespace ImmutableBuilder.Tests
             Assert.NotEqual(p1, p2);
             Assert.Equal(p1.Age, p2.Age);
             Assert.Equal(p1.Name, p2.Name);
+            Assert.False(object.ReferenceEquals(p1, p2));
 
-            p2 = Builder<Person>.Clone(p1);
+            p2 = Builder<Person>.CloneShallow(p1);
 
             Assert.NotNull(p1);
             Assert.NotNull(p2);
