@@ -12,8 +12,7 @@ namespace ImmutableBuilder
 
         public PropertyInfo Property { get; internal set; }
 
-        protected static readonly IDictionary<string, PropertySetterDelegate> SettersCache
-            = new Dictionary<string, PropertySetterDelegate>();
+        protected static readonly IDictionary<string, PropertySetterDelegate> SettersCache = new Dictionary<string, PropertySetterDelegate>();
     }
 
     internal class PropertySetterDelegate<TModel, TProperty> : PropertySetterDelegate

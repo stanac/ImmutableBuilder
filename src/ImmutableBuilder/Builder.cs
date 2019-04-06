@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -8,12 +10,38 @@ namespace ImmutableBuilder
         where T : class
     {
         private T _obj;
+        private bool ThrowExceptionOnBuildIfNotAllPropsAreSet { get; }
+        private readonly DistinctListOfStrings _setPropertiesNames = new DistinctListOfStrings();
+        private readonly IReadOnlyList<string> _propNames;
+
+        /// <summary>
+        /// Collection of names of properties that are set
+        /// </summary>
+        public IEnumerable<string> SetPropertiesNames => _setPropertiesNames;
+
+        /// <summary>
+        /// Collection of names of properties that are not set
+        /// </summary>
+        public IEnumerable<string> NotSetPropertiesNames => _propNames.Except(_setPropertiesNames);
+
+        public bool AreAllPropertiesSet => _setPropertiesNames.Count == _propNames.Count;
 
         /// <summary>
         /// Creates new instance of <see cref="Builder{T}"/>
         /// </summary>
-        public Builder()
+        public Builder(): this (false) { }
+
+        /// <summary>
+        /// Creates new instance of <see cref="Builder{T}"/>
+        /// </summary>
+        /// <param name="throwExceptionOnBuildIfNotAllPropsAreSet">
+        /// If set to true, it will require for all properties to be set on build
+        /// by throwing exception if not all properties are set
+        /// </param>
+        public Builder(bool throwExceptionOnBuildIfNotAllPropsAreSet)
         {
+            ThrowExceptionOnBuildIfNotAllPropsAreSet = throwExceptionOnBuildIfNotAllPropsAreSet;
+            _propNames = PropertyNamesGetter.GetPropertyNames<T>();
             Clear();
         }
 
@@ -24,6 +52,7 @@ namespace ImmutableBuilder
         public Builder(T model) : this()
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
+            _setPropertiesNames.AddRange(_propNames);
             _obj = CloneShallow(model);
         }
         
@@ -45,6 +74,7 @@ namespace ImmutableBuilder
         {
             var prop = (exp.Body as MemberExpression).Member as PropertyInfo;
             PropertySetterDelegate<T, P>.GetSetter(prop).Delegate(_obj, value);
+            _setPropertiesNames.Add(prop.Name);
             return this;
         }
 
@@ -54,6 +84,7 @@ namespace ImmutableBuilder
         /// <returns>Same instance of <see cref="Builder{T}"/></returns>
         public Builder<T> Clear()
         {
+            _setPropertiesNames.Clear();
             Func<T> ctor = ConstructorDelegate.GetConstructor<T>();
             _obj = ctor();
             return this;
@@ -65,6 +96,14 @@ namespace ImmutableBuilder
         /// <returns>Instance of {T}</returns>
         public T Build()
         {
+            if (ThrowExceptionOnBuildIfNotAllPropsAreSet && !AreAllPropertiesSet)
+            {
+                throw new InvalidOperationException("Not all properties are set. Set properties are: " +
+                    (_setPropertiesNames.Count == 0 ? "{none}" : string.Join(", ", _setPropertiesNames)) +
+                    "."
+                    );
+            }
+
             return _obj;
         }
 

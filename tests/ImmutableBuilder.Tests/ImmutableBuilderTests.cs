@@ -1,4 +1,5 @@
 using ImmutableBuilder.Tests.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -103,6 +104,59 @@ namespace ImmutableBuilder.Tests
             Assert.Equal(11, p2.Age);
             Assert.NotEqual(p1.Age, p2.Age);
             Assert.Equal(p1.Name, p2.Name);
+        }
+
+        [Fact]
+        public void BuilderWithRequiredProps_ListOfSetPropertiesUpdates()
+        {
+            var builder = new Builder<Account>(throwExceptionOnBuildIfNotAllPropsAreSet: true);
+
+            Assert.False(builder.AreAllPropertiesSet);
+            Assert.Empty(builder.SetPropertiesNames);
+            Assert.Equal(2, builder.NotSetPropertiesNames.Count());
+
+            builder.Set(x => x.AccountNumber, "123");
+            Assert.False(builder.AreAllPropertiesSet);
+            Assert.NotEmpty(builder.SetPropertiesNames);
+            Assert.Equal("AccountNumber", builder.SetPropertiesNames.Single());
+            Assert.Single(builder.NotSetPropertiesNames);
+
+            builder.Set(x => x.IsSavingsAccount, true);
+            Assert.True(builder.AreAllPropertiesSet);
+            Assert.Equal(2, builder.SetPropertiesNames.Count());
+            Assert.Contains("AccountNumber", builder.SetPropertiesNames);
+            Assert.Contains("IsSavingsAccount", builder.SetPropertiesNames);
+            Assert.Empty(builder.NotSetPropertiesNames);
+        }
+
+        [Fact]
+        public void BuilderFromModel_AllPropsAreSet()
+        {
+            Person model = BuildTestPerson();
+
+            var builder = Builder<Person>.FromObject(model);
+            Assert.True(builder.AreAllPropertiesSet);
+        }
+
+        [Fact]
+        public void BuildThrowingExceptionIfNotAllPropertiesAreSetInBuild()
+        {
+            Func<Account> test = () => new Builder<Account>(throwExceptionOnBuildIfNotAllPropsAreSet: true)
+                .Set(x => x.AccountNumber, "123")
+                //.Set(x => x.IsSavingsAccount, false)
+                .Build();
+
+            bool error = false;
+            try
+            {
+                test();
+            }
+            catch (InvalidOperationException)
+            {
+                error = true;
+            }
+
+            Assert.True(error, "Exception is throw");
         }
 
         [Fact]

@@ -94,6 +94,15 @@ Person p = new Builder<Person>()
     .Build();
 ```
 
+**Building models making sure all properties are set**
+
+```csharp
+new Builder<Account>(throwExceptionOnBuildIfNotAllPropsAreSet: true)
+.Set(x => x.AccountNumber, "123")
+//.Set(x => x.IsSavingsAccount, false) // this property is not set
+.Build(); // throws InvalidOpertaionException with list of set properties
+```
+
 **Cloning model by value**
 ```csharp
 Person p1 = p = new Builder<Person>()
@@ -118,4 +127,22 @@ Person p1 = p = new Builder<Person>()
     .Build();
 
 Person p2 = Builder<Person>.Change(p1, m => m.Age, 11);
+```
+
+**Useful properties**
+```csharp
+var builder = new Builder<Account>();
+// builder.AreAllPropertiesSet; // returns False
+// builder.SetPropertiesNames; // empty
+// builder.NotSetPropertiesNames; // yields "AccountNumber" and "IsSavingsAccount"
+
+builder.Set(x => x.AccountNumber, "123");
+// builder.AreAllPropertiesSet; // returns False
+// builder.SetPropertiesNames; // yields "AccountNumber"
+// builder.NotSetPropertiesNames; // yields "IsSavingsAccount"
+
+builder.Set(x => x.IsSavingsAccount, true);
+// builder.AreAllPropertiesSet; // returns True
+// builder.SetPropertiesNames; // yields "AccountNumber" and "IsSavingsAccount"
+// builder.NotSetPropertiesNames; // empty
 ```
