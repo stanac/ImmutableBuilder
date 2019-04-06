@@ -56,9 +56,6 @@ namespace ImmutableBuilder
                 var getMethod = prop.GetGetMethod() ?? prop.GetGetMethod(true);
                 var setMethod = prop.GetSetMethod() ?? prop.GetSetMethod(true);
 
-                if (prop.PropertyType.IsByRef)
-                    ;
-
                 gen.Emit(OpCodes.Ldloc_0);
                 gen.Emit(OpCodes.Ldarg_0);
                 gen.Emit(OpCodes.Callvirt, getMethod);

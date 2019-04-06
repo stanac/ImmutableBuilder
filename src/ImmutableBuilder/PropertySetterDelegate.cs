@@ -8,7 +8,7 @@ namespace ImmutableBuilder
 {
     internal abstract class PropertySetterDelegate
     {
-        public string PropertyName => Property?.Name;
+        // public string PropertyName => Property?.Name;
 
         public PropertyInfo Property { get; internal set; }
 
